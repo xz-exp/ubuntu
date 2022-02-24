@@ -1,0 +1,37 @@
+https://helloworld.pixnet.net/blog/post/47845539-%E8%A8%AD%E5%AE%9A-ubuntu-20.04-lts-%E9%9D%9C%E6%85%8Bip
+
+helloworld
+
+AUG 27 FRI 2021 11:04
+設定 Ubuntu 20.04 LTS 靜態ip
+分享: facebook PLURK twitter  
+Ubuntu Linux 20.04 網路設竟由 netplan 管理
+如果一開始設定是 dhcp client 的話，/etc/netplan/00-installer-config.yaml 設定類似如下
+# This is the network config written by 'subiquity'
+network:
+  ethernets:
+    ens160:
+      dhcp4: true #使用dhcp 抓動態ip
+  version: 2
+
+
+以下是改成靜態ip的步驟
+1. 確認/etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg 是否為以下參數
+network: {config: disabled}
+
+2. 修改 /etc/netplan/00-installer-config.yaml
+network:
+  ethernets:
+    ens160:
+      addresses: [10.10.10.246/24] #靜態ip 地址
+      gateway4: 10.10.10.254 # default gateway
+      nameservers:
+        addresses: [10.10.10.26,8.8.8.8] #dns server, 兩組以上可用逗點隔開
+  version: 2
+存檔離開
+
+3. 套用設定檔
+# netplan apply
+
+4. 檢查ip 是否生效
+# ip addr show 或是 # ifconfig -a
